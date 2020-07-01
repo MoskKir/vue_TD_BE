@@ -6,11 +6,9 @@ export default class TodosController {
     private static _router :ExpressRouter = ExpressRouter();
 
     private static async addNewTodo(req :Request, res :Response, next :NextFunction) {
-        console.log(req.body)
         try {            
             if (req.body) {
                 let todo = await TodosService.addNewTodo(req.body);
-                console.log(todo.rows[0])
                 res.json(todo.rows[0]);           
             }
         } catch (error) {
@@ -20,7 +18,8 @@ export default class TodosController {
 
     private static async getAllTodos(req :Request, res :Response, next :NextFunction) {
         try {
-            const todos = await TodosService.getAllTodos();
+            const userID = req.params.id
+            const todos = await TodosService.getAllTodos(userID);
             res.json(todos);
         } catch (error) {
             res.status(400).send({error: error.message});
@@ -30,8 +29,8 @@ export default class TodosController {
     private static async getTodo(req :Request, res :Response, next :NextFunction) {
         try {
             const todoID = req.params.id
-            const todos = await TodosService.getTodo(todoID);
-            res.json(todos);
+            const todo = await TodosService.getTodo(todoID);
+            res.json(todo);
         } catch (error) {
             res.status(400).send({error: error.message});
         }
