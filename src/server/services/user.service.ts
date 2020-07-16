@@ -16,14 +16,28 @@ export default class UserService {
         return newUser.rows[0];
     }
 
-    public static async getUser(body :IUser) {
-        body.password = await UserService.hashPssw(body.password);
+    public static async getUser(body :any) {       
+        try {
+            const user = await pool.query(
+                `select * from users where email='${body.email}'`
+            )
+            
+            if (!user.rows[0]) {
+                throw new Error('User with this email do not exist');
+            }
 
-        const newUser = await pool.query(
-            'select * from users where email='root@root.com'',
-            [ body.login, body.email, body.password ]
-        )
-        return newUser.rows[0];
+            const isMatch = await bcrypt.compare(body.password, user.rows[0].password);
+
+            if (isMatch) {
+                const token = jwt.encode({id: user.rows[0].user_id }, 'mysecretword');
+                const userData = user.rows[0];
+                return {userData, token}
+            } else {
+                throw new Error('Wrong password');
+            }
+        } catch (error) {
+            return error.message
+        }
     }
 
 
