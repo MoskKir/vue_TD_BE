@@ -18,7 +18,7 @@ export default class TodosController {
 
     private static async getAllTodos(req :Request, res :Response, next :NextFunction) {
         try {
-            const userID = req.params.id
+            const userID = req.query.author_id;
             const todos = await TodosService.getAllTodos(userID);
             res.json(todos);
         } catch (error) {
@@ -36,10 +36,21 @@ export default class TodosController {
         }
     }
 
+    private static async deleteTodo(req :Request, res :Response, next :NextFunction) {
+        try {
+            const todoID = req.params.id
+            await TodosService.deleteTodo(todoID);
+            res.json(`deleted todo id ${todoID}`);
+        } catch (error) {
+            res.status(400).send({error: error.message});
+        }
+    }
+
     public static routes(path :string = '/') {
         this._router.post(`${path}`, this.addNewTodo);
         this._router.get(`${path}`, this.getAllTodos);
         this._router.get(`${path}:id`, this.getTodo);
+        this._router.delete(`${path}:id`, this.deleteTodo);
 
         return this._router;
     }

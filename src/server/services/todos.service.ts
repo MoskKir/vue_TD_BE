@@ -3,7 +3,7 @@ import pool from '../db/db.connect';
 import ITodo from '../interfaces/todo.interface';
 
 export default class TodosService {
-    public static async getAllTodos(authorId :string) {
+    public static async getAllTodos(authorId :any) {
         const allTodos = await pool.query(`SELECT * FROM todos WHERE author_id = ${authorId}`);
         return allTodos.rows;
     }
@@ -19,5 +19,11 @@ export default class TodosService {
             [ todo.author_id, todo.title, todo.description, todo.status ]
         )
         return newTodo;
+    }
+
+    public static async deleteTodo(todoId :string) {
+        const todo = await pool.query(`DELETE FROM todos WHERE todo_id = ${todoId}`);
+        console.log(todo)
+        return todo.rows[0];
     }
 }
