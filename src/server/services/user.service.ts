@@ -40,20 +40,9 @@ export default class UserService {
         }
     }
 
-
-
     private static async hashPssw(password: string) {
         return await bcrypt.hash(password, 8);
     }
-
-    // private static async generateAuthToken() {
-    //     const token = jwt.encode()
-    // }
-
-    // private static async findByCredentials(email: string, password: string) {
-        
-    // }
-
 
 }
 
